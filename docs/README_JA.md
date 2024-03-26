@@ -1,14 +1,13 @@
 # @pengoose/jotai
 
 <div align="center">
-
-<h3>A simple and powerful state convention manager for React using Jotai.</h3>
   <div>
     <a href="https://www.npmjs.com/package/@pengoose/jotai">
       <img src="https://img.shields.io/npm/v/@pengoose/jotai?style=for-the-badge" alt="npm version" />
     </a>
   </div>
 
+<h3>Reactの状態をJotaiを使って簡単かつ強力に管理するConvention manager</h3>
   <picture width="350">
     <source media="(prefers-color-scheme: light)" srcset="https://i.imgur.com/lPN6qxb.png" width="550">
     <source media="(prefers-color-scheme: dark)" srcset="https://i.imgur.com/N5aPzdJ.png" width="550">
@@ -16,35 +15,35 @@
   </picture>
   <h4> * Illustration created by <a href="https://twitter.com/takuan1469414">沢庵</a> </h4>
 
-[English](./README.md) | [한국어](./docs/README_KO.md) | [日本語](./docs/README_JA.md)
+[English](../README.md) | [한국어](./README_KO.md) | [日本語](./README_JA.md)
 
 </div>
 
-## Introduction
+## 概要
 
-`@pengoose/jotai` is a `Convention manager` for managing state in React applications using Jotai. It provides a simple and structured way to define and manage your application's state, making it easier to organize and maintain your state logic. By following a set of conventions, you can create a consistent and scalable state management system that is easy to understand and maintain.
+`@pengoose/jotai`は Jotai を使用して React アプリケーションの状態を管理する`Convention manager`です。アプリケーションの状態を定義し、管理するためのシンプルで構造化された方法を提供し、状態ロジックを整理し、メンテナンスしやすくします。一連の規則に従うことで、理解しやすく、メンテナンスしやすい一貫した拡張可能な状態管理システムを作成できます。
 
-## Installation
+## インストール
 
-Install the package using npm:
+npm を使用する場合:
 
 ```sh
 npm install @pengoose/jotai
 ```
 
-Or using yarn:
+yarn を使用する場合:
 
 ```sh
 yarn add @pengoose/jotai
 ```
 
-## Getting Started (Step by Step)
+## 使い方 (ステップバイステップ)
 
-1. Define the interfaces of the states you want to manage using atoms.
-2. Inject the interfaces into the generic type of the `AtomManager`.
-3. Create a class that manages the state by inheriting the `AtomManager` abstract class.
+1. atom で管理する状態のインターフェースを定義します。
+2. `AtomManager`のジェネリック型にインジェクトします。
+3. AtomManager(抽象クラス)を継承して状態を管理するクラスを作成します。
 
-### Step1: Define your state interfaces to manage with atoms
+### Step1: atom で管理する状態のインターフェースを定義
 
 ```ts
 // example/types.ts
@@ -61,19 +60,19 @@ export interface PlaylistStatus {
 }
 ```
 
-### Step2: Create an AtomManager class
+### Step2: atomManager クラスを作成
 
-- Extend the `AtomManager` class to create your state manager.
-- you have to implement selectors and actions in the `AtomManager` class.
+- `AtomManager`クラスを拡張して状態マネージャを作成します。
+- `AtomManager`クラスで selectors(Getter)と actions(Setter)を実装する必要があります。
 
 ```ts
 import { atom } from 'jotai';
 import { AtomManager } from '@pengoose/jotai';
 import { PlaylistStatus, Music } from '@/types';
 
-// 1. Extend AtomManager to create your state manager
+// 1. AtomManagerを拡張して状態マネージャを作成します。
 export class Playlist extends AtomManager<PlaylistStatus> {
-  // 2. Implement selectors
+  // 2. selectorsを実装します。
   public selectors = {
     playlist: atom((get) => {
       const { playlist } = get(this.atom);
@@ -90,7 +89,7 @@ export class Playlist extends AtomManager<PlaylistStatus> {
     // ... other selectors
   };
 
-  // 3. Implement actions
+  // 3. actionsを実装します。
   public actions = {
     add: atom(null, (get, set, music: Music) => {
       const { playlist } = get(this.atom);
@@ -106,7 +105,7 @@ export class Playlist extends AtomManager<PlaylistStatus> {
     // ... other actions
   };
 
-  // 4. Implement helper methods
+  // 4. 必要に応じてオブジェクト内で使用する追加のメソッドを実装します。
   private isEmpty(playlist: Music[]) {
     return playlist.length === 0;
   }
@@ -116,7 +115,7 @@ export class Playlist extends AtomManager<PlaylistStatus> {
   }
 }
 
-// 5. Create an instance of the Playlist class
+// 5. Playlistクラスのインスタンスを作成します。
 const initialState: PlaylistStatus = {
   playlist: [],
   index: 0,
@@ -127,9 +126,9 @@ export const playlistManager = new Playlist(initialState);
 
 ---
 
-### Step3: Wrap instance of AtomManager with `useManager` hook
+### Step3: `useManager`フックで AtomManager インスタンスをラップする
 
-- The `useManager` hook wraps the instance of the `AtomManager` class and converts the abstracted selectors and actions into `useAtomValue` and `useSetAtom` hooks, respectively, inferring the types for the user.
+- `useManager`フックは AtomManager インスタンス内部の抽象化された selectors と actions をそれぞれ useAtomValue と useSetAtom フックに変換し、それに対する型を推論してユーザーに返します。
 
 ```tsx
 // usePlaylist.ts
@@ -157,9 +156,9 @@ export const usePlaylist = () => {
 };
 ```
 
-### ⛳️ If you Don't use `useManager` hook 🥲
+### ⛳️ `useManager`フックを使用しない場合 🥲
 
-- You can use Jotai's `useAtomValue` and `useSetAtom` hooks to get and set the state of the `AtomManager` instance without using `useManager`. However, it is a bit cumbersome to use. 😨
+- `useManager`を使用せずに Jotai の useAtomValue と useSetAtom フックを使用して AtomManager インスタンスの状態を取得および設定できます。ただし、少し手間がかかります。 😨
 
 ```tsx
 // usePlaylist.ts
@@ -189,7 +188,7 @@ export const usePlaylist = () => {
 
 ---
 
-### Step4: Use custom hook in your components 🚀
+### Step4: コンポーネントでカスタムフックを使用する 🚀
 
 ```tsx
 // Playlist.tsx
@@ -227,11 +226,11 @@ export const Playlist = () => {
 
 ---
 
-## Summary
+## 要約
 
-The `AtomManager` class is designed to be used with custom hooks to encapsulate the state management logic and make it easier to use in your components.
+`AtomManager`クラスはカスタムフックと組み合わせて状態管理ロジックをカプセル化し、コンポーネントで簡単に使用できるように設計されています。
 
-> Flow: Class(AtomManager) --> custom hook --> Component(View)
+> フロー: Class(AtomManager) --> custom hook --> Component(View)
 
 <div align="center">
   😗👍
@@ -239,4 +238,4 @@ The `AtomManager` class is designed to be used with custom hooks to encapsulate 
 
 ## Contributing
 
-Contributions are welcome! For major changes, please open an issue first to discuss what you would like to change. ;)
+貢献はいつでも歓迎します！主要な変更の場合は、まず issue を作成して議論していただけると幸いです。;)
